@@ -27,6 +27,8 @@ class Product(models.Model):
     description = models.TextField(null=True, blank=True)
     expirationDate = models.DateField(default=date(2023,12,31))
     fabricationDate = models.DateField(default=timezone.now())
+    class Meta:
+        db_table ='product'
 
 class Client(User):
     firstName = models.CharField(max_length=50, default='')
@@ -43,8 +45,11 @@ class Client(User):
 
 class Panier(models.Model):
     panierNumber = models.PositiveIntegerField(default=1)
+    productNumber = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=1)
+    dateAdd = models.DateField(default=timezone.now())
+ 
     
-
 class Command(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE) # utiliser en relation 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)  # utiliser en relation 
@@ -68,11 +73,13 @@ class CommandDetails(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     unitPrice = models.FloatField(default=0.0)
     totalPrice = models.FloatField(default=0.0) 
+   
 
 class DeliveryInformation(models.Model):
     sendingNumber = models.PositiveIntegerField(default=1)
     Type = models.CharField(max_length=20, default='')
     Price = models.FloatField(default=0.0)
     destination = models.TextField(default='Rue, la ville , code de postal')
+   
 
 
