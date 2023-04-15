@@ -8,7 +8,7 @@ class Product(models.Model):
     label = models.CharField(max_length=20, default='')
     price = models.FloatField(default=0)
     stock = models.PositiveSmallIntegerField(default=0)
-    image = models.ImageField(upload_to='image/product_image',null=True, blank=True )
+    #image = models.ImageField(upload_to='image/product_image' )
     description = models.TextField(null=True, blank=True)
     expirationDate = models.DateField(default=date(2023,12,31))
     fabricationDate = models.DateField(default=timezone.now())
@@ -19,6 +19,7 @@ class Product(models.Model):
         return f'name={self.name}, email={self.email}, phone ={self.phone},'
 
 class Command(models.Model):
+    name = models.CharField( max_length= 20,default='')
     commandNumber = models.PositiveIntegerField(default=1)
     clientNumber = models.PositiveIntegerField(default=00)
     status = models.TextField(default='')
@@ -33,7 +34,7 @@ class Command(models.Model):
         #tuples in command table are orered by data_cmd 
         ordering = ['-date_cmd']
         # the name of the table in admin panel is command table(a name readable by humans)
-        verbose_name = 'Command table'
+        verbose_name = 'command'
         # the combinition of client, product and data_cmd must be unique
        # unique_together = [('client', 'product', 'date_cmd')]
     def __str__(self):
