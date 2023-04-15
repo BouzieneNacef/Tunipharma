@@ -4,21 +4,6 @@ from django.db import models
 
 # Create your models here.
 
-
-class User(models.Model):
-    name = models.CharField(max_length=50, default='')
-    password = models.CharField(max_length=50, default='')
-    email = models.EmailField(default='')
-    phone = models.TextField(max_length=20, default='')
-    connectionStatus = models.CharField(max_length= 20, default='')
-    InscriptionDate  = models.DateField(default=date(2023,1,1))
-    class Meta:
-        abstract = True
-        ordering = ['email']
-
-    def __str__(self):
-        return f'name={self.name}, email={self.email}, phone ={self.phone},'
-
 class Product(models.Model):
     label = models.CharField(max_length=20, default='')
     price = models.FloatField(default=0)
@@ -29,33 +14,19 @@ class Product(models.Model):
     fabricationDate = models.DateField(default=timezone.now())
     class Meta:
         db_table ='product'
+        
+    def __str__(self):
+        return f'name={self.name}, email={self.email}, phone ={self.phone},'
 
-class Client(User):
-    firstName = models.CharField(max_length=50, default='')
-    lastName = models.CharField(max_length=50, default='')
-    email = models.EmailField(null=True, blank=True)
-    phone = models.CharField(max_length=20, default='+21600000000')
-    birthdate = models.DateField(default=date(1995,11,11))
-   # typeClient = models.CharField(max_length=50, choices=[('LOYAL','Loyal Customer'),
-    #('Normall','Normal Customer'),('VIP',' Vip Customer')], default='Normal')
-    # Relationship:
-    clientProduct = models.ManyToManyField(Product, through='Command', through_fields=('client', 'product'))
-    class Meta:
-        db_table ='client'
-
-class Panier(models.Model):
-    panierNumber = models.PositiveIntegerField(default=1)
-    productNumber = models.PositiveIntegerField(default=1)
-    quantity = models.PositiveIntegerField(default=1)
-    dateAdd = models.DateField(default=timezone.now())
- 
-    
 class Command(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE) # utiliser en relation 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # utiliser en relation 
+    commandNumber = models.PositiveIntegerField(default=1)
+    clientNumber = models.PositiveIntegerField(default=00)
+    status = models.TextField(default='')
     date_cmd = models.DateField(default=timezone.now())
     quality = models.PositiveSmallIntegerField(default=1)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    # OnetoMany relationship between product and command
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)  
     class Meta:
         # the table name in database 
         db_table ='command'
@@ -64,7 +35,9 @@ class Command(models.Model):
         # the name of the table in admin panel is command table(a name readable by humans)
         verbose_name = 'Command table'
         # the combinition of client, product and data_cmd must be unique
-        unique_together = [('client', 'product', 'date_cmd')]
+       # unique_together = [('client', 'product', 'date_cmd')]
+    def __str__(self):
+        return f'commandNumber={self.commandNumber}, date_cmd={self.date_cmd}, quantity ={self.quality},' 
 
 class CommandDetails(models.Model):
     commandNumber = models.PositiveIntegerField(default=0)
@@ -73,13 +46,20 @@ class CommandDetails(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     unitPrice = models.FloatField(default=0.0)
     totalPrice = models.FloatField(default=0.0) 
-   
-
+    #onetoOne relationships between command and commandDetails:
+    commad = models.OneToOneField(Command, on_delete=models.CASCADE, null=True, blank=True)
+    class Meta:
+        db_table ='command details'
+        
 class DeliveryInformation(models.Model):
     sendingNumber = models.PositiveIntegerField(default=1)
     Type = models.CharField(max_length=20, default='')
     Price = models.FloatField(default=0.0)
     destination = models.TextField(default='Rue, la ville , code de postal')
+    #onetoOne relationships between command and DeliveryInformation:
+    commad = models.OneToOneField(Command, on_delete=models.CASCADE, null=True, blank=True)
+    class Meta:
+        db_table ='delivery information'
    
 
 
