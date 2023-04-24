@@ -1,29 +1,40 @@
-from datetime import date
+
+
+from datetime import timezone
+from time import timezone
 from django.utils import timezone
 from django.db import models
 
 # Create your models here.
 
 class Product(models.Model):
+    name =  models.CharField(max_length=20, default='')
     label = models.CharField(max_length=20, default='')
     price = models.FloatField(default=0)
-    stock = models.PositiveSmallIntegerField(default=0)
-    #image = models.ImageField(upload_to='image/product_image' )
-    description = models.TextField(null=True, blank=True)
-    expirationDate = models.DateField(default=date(2023,12,31))
-    fabricationDate = models.DateField(default=timezone.now())
+    image = models.ImageField(upload_to='image/product_image', null=True, blank=True)
+    description = models.TextField(null=True, blank=True)   
     class Meta:
         db_table ='product'
         
     def __str__(self):
         return f'name={self.name}, email={self.email}, phone ={self.phone},'
+    
+class Category(models.Model):
+    categoryName = models.CharField(max_length=20, default='')
+    categoryDescription = models.CharField(max_length=100, default='')
+    # OnetoMany relationship between Category and Product
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)  
+    class Meta:
+        db_table ='category'
+
+    def __str__(self):
+        return f'name= {self.categoryName},description= {self.categoryDescription} '
 
 class Command(models.Model):
-    name = models.CharField( max_length= 20,default='')
     commandNumber = models.PositiveIntegerField(default=1)
     clientNumber = models.PositiveIntegerField(default=00)
     status = models.TextField(default='')
-    date_cmd = models.DateField(default=timezone.now())
+    date_cmd = models.DateField(default=timezone.now)
     quality = models.PositiveSmallIntegerField(default=1)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     # OnetoMany relationship between product and command
